@@ -1,6 +1,8 @@
 package ipc_test
 
 import (
+	"fmt"
+	"log"
 	"syscall"
 	"testing"
 	"time"
@@ -65,4 +67,49 @@ func TestMsgsnd(t *testing.T) {
 			t.Fatal("blocked for too long")
 		}
 	}
+}
+
+func ExampleMsgsnd() {
+	// create an ftok key
+	key, err := ipc.Ftok("/dev/null", 42)
+	if err != nil {
+		panic(err)
+	}
+
+	// create a new message queue
+	qid, err := ipc.Msgget(key, ipc.IPC_CREAT|ipc.IPC_EXCL|0600)
+	if err == syscall.EEXIST {
+		log.Fatalf("queue(key=0x%x) exists", key)
+	}
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// remove queue in the end
+	defer func() {
+		err := ipc.Msgctl(qid, ipc.IPC_RMID)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}()
+
+	// send a message
+	go func() {
+		msg := &ipc.Msgbuf{Mtype: 12, Mtext: []byte("bonjour")}
+		err = ipc.Msgsnd(qid, msg, 0)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}()
+
+	// receive the message
+	msg := &ipc.Msgbuf{Mtype: 12}
+	err = ipc.Msgrcv(qid, msg, 0)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("received message: %q", msg.Mtext)
+
+	// Output:
+	// received message: "bonjour"
 }
