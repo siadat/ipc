@@ -12,5 +12,6 @@ func Ftok(path string, id uint64) (uint64, error) {
 	if err := syscall.Stat(path, st); err != nil {
 		return 0, err
 	}
-	return ((st.Ino & 0xffff) | ((st.Dev & 0xff) << 16) | ((id & 0xff) << 24)), nil
+	return uint64((st.Ino & 0xffff) | uint64((st.Dev & 0xff) << 16) | 
+		((id & 0xff) << 24)), nil
 }
