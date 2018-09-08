@@ -3,5 +3,4 @@ os:
   - linux
   - osx
 go:
-  - 1.8
-  - master
+  - 1.11
