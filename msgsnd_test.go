@@ -1,4 +1,4 @@
-package ipc
+package ipc_test
 
 import (
 	"fmt"
@@ -6,11 +6,13 @@ import (
 	"syscall"
 	"testing"
 	"time"
+
+	"github.com/siadat/ipc"
 )
 
 func TestMsgsnd(t *testing.T) {
 	keyFunc := func(path string, id uint64) uint64 {
-		key, err := Ftok(path, id)
+		key, err := ipc.Ftok(path, id)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -25,7 +27,7 @@ func TestMsgsnd(t *testing.T) {
 	}
 
 	for _, tt := range cases {
-		qid, err := Msgget(tt.key, IPC_CREAT|IPC_EXCL|tt.perm)
+		qid, err := ipc.Msgget(tt.key, ipc.IPC_CREAT|ipc.IPC_EXCL|tt.perm)
 		if err == syscall.EEXIST {
 			t.Errorf("queue(key=0x%x) exists", tt.key)
 		}
@@ -33,7 +35,7 @@ func TestMsgsnd(t *testing.T) {
 			t.Fatal(err)
 		}
 		defer func(qid uint64) {
-			err := Msgctl(qid, IPC_RMID)
+			err := ipc.Msgctl(qid, ipc.IPC_RMID)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -42,8 +44,8 @@ func TestMsgsnd(t *testing.T) {
 		mtext := "hello"
 		done := make(chan struct{})
 		go func() {
-			qbuf := &Msgbuf{Mtype: 12}
-			err := Msgrcv(qid, qbuf, 0)
+			qbuf := &ipc.Msgbuf{Mtype: 12}
+			err := ipc.Msgrcv(qid, qbuf, 0)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -53,8 +55,8 @@ func TestMsgsnd(t *testing.T) {
 			done <- struct{}{}
 		}()
 
-		m := &Msgbuf{Mtype: 12, Mtext: []byte(mtext)}
-		err = Msgsnd(qid, m, 0)
+		m := &ipc.Msgbuf{Mtype: 12, Mtext: []byte(mtext)}
+		err = ipc.Msgsnd(qid, m, 0)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -69,13 +71,13 @@ func TestMsgsnd(t *testing.T) {
 
 func ExampleMsgsnd() {
 	// create an ftok key
-	key, err := Ftok("/dev/null", 42)
+	key, err := ipc.Ftok("/dev/null", 42)
 	if err != nil {
 		panic(err)
 	}
 
 	// create a new message queue
-	qid, err := Msgget(key, IPC_CREAT|IPC_EXCL|0600)
+	qid, err := ipc.Msgget(key, ipc.IPC_CREAT|ipc.IPC_EXCL|0600)
 	if err == syscall.EEXIST {
 		log.Fatalf("queue(key=0x%x) exists", key)
 	}
@@ -85,7 +87,7 @@ func ExampleMsgsnd() {
 
 	// remove queue in the end
 	defer func() {
-		err := Msgctl(qid, IPC_RMID)
+		err := ipc.Msgctl(qid, ipc.IPC_RMID)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -93,16 +95,16 @@ func ExampleMsgsnd() {
 
 	// send a message
 	go func() {
-		msg := &Msgbuf{Mtype: 12, Mtext: []byte("bonjour")}
-		err = Msgsnd(qid, msg, 0)
+		msg := &ipc.Msgbuf{Mtype: 12, Mtext: []byte("bonjour")}
+		err = ipc.Msgsnd(qid, msg, 0)
 		if err != nil {
 			log.Fatal(err)
 		}
 	}()
 
 	// receive the message
-	msg := &Msgbuf{Mtype: 12}
-	err = Msgrcv(qid, msg, 0)
+	msg := &ipc.Msgbuf{Mtype: 12}
+	err = ipc.Msgrcv(qid, msg, 0)
 	if err != nil {
 		log.Fatal(err)
 	}

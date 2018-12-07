@@ -1,14 +1,17 @@
-package ipc
+package ipc_test
 
 import (
 	"fmt"
 	"syscall"
 	"testing"
+
+	"github.com/siadat/ipc"
+	"github.com/siadat/ipc/cgo_msgget"
 )
 
 func TestMsgget(t *testing.T) {
 	keyFunc := func(path string, id uint64) uint64 {
-		key, err := Ftok(path, id)
+		key, err := ipc.Ftok(path, id)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -24,11 +27,11 @@ func TestMsgget(t *testing.T) {
 	}
 
 	for _, tt := range cases {
-		_, err := Msgget(tt.key, tt.perm)
+		_, err := ipc.Msgget(tt.key, tt.perm)
 		if want, got := syscall.ENOENT, err; want != got {
 			t.Fatalf("msgget for non-existing queue should fail without IPC_CREAT, want %q, got %v", want, got)
 		}
-		qid, err := Msgget(tt.key, IPC_CREAT|IPC_EXCL|tt.perm)
+		qid, err := ipc.Msgget(tt.key, ipc.IPC_CREAT|ipc.IPC_EXCL|tt.perm)
 		if err == syscall.EEXIST {
 			t.Errorf("queue with key 0x%x exists", tt.key)
 		}
@@ -36,12 +39,12 @@ func TestMsgget(t *testing.T) {
 			t.Fatal(err)
 		}
 		defer func() {
-			err = Msgctl(qid, IPC_RMID)
+			err = ipc.Msgctl(qid, ipc.IPC_RMID)
 			if err != nil {
 				t.Fatal(err)
 			}
 		}()
-		qidAgain, err := Msgget(tt.key, tt.perm)
+		qidAgain, err := cgo_msgget.Msgget(tt.key, tt.perm)
 		if err != nil {
 			t.Fatal(err)
 		}

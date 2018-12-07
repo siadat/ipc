@@ -1,10 +1,13 @@
-package ipc
+package ipc_test
 
 import (
 	"math/rand"
 	"syscall"
 	"testing"
 	"time"
+
+	"github.com/siadat/ipc"
+	"github.com/siadat/ipc/cgo_ftok"
 )
 
 func TestMsgctl(t *testing.T) {
@@ -19,12 +22,12 @@ func TestMsgctl(t *testing.T) {
 	}
 
 	for _, tt := range cases {
-		key, err := Ftok(tt.path, tt.id)
+		key, err := cgo_ftok.Ftok(tt.path, tt.id)
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		qid, err := Msgget(key, tt.perm|IPC_CREAT)
+		qid, err := ipc.Msgget(key, tt.perm|ipc.IPC_CREAT)
 		if err == syscall.EEXIST {
 			t.Errorf("queue(key=0x%x) exists", key)
 		}
@@ -32,12 +35,12 @@ func TestMsgctl(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		err = Msgctl(uint64(qid), IPC_RMID)
+		err = ipc.Msgctl(uint64(qid), ipc.IPC_RMID)
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		_, err = Msgget(key, tt.perm)
+		_, err = ipc.Msgget(key, tt.perm)
 		if want, got := syscall.ENOENT, err; want != got {
 			t.Fatalf("want %q, got %v", want, got)
 		}

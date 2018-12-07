@@ -1,8 +1,11 @@
-package ipc
+package ipc_test
 
 import (
 	"fmt"
 	"testing"
+
+	"github.com/siadat/ipc"
+	"github.com/siadat/ipc/cgo_ftok"
 )
 
 func TestFtok(t *testing.T) {
@@ -15,11 +18,11 @@ func TestFtok(t *testing.T) {
 	}
 
 	for _, tt := range cases {
-		key, err := Ftok(tt.path, tt.id)
+		key, err := ipc.Ftok(tt.path, tt.id)
 		if err != nil {
 			t.Fatal(err)
 		}
-		want, err := Ftok(tt.path, tt.id)
+		want, err := cgo_ftok.Ftok(tt.path, tt.id)
 		if err != nil {
 			t.Fatal(err)
 		}
