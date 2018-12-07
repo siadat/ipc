@@ -2,12 +2,11 @@ package main
 
 import (
 	"fmt"
+	"ipc"
 	"log"
 	"os"
 	"strconv"
 	"strings"
-
-	"github.com/siadat/ipc"
 )
 
 func main() {

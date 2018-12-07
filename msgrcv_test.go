@@ -1,17 +1,15 @@
-package ipc_test
+package ipc
 
 import (
 	"log"
 	"syscall"
 	"testing"
 	"time"
-
-	"github.com/siadat/ipc"
 )
 
 func TestMsgrcvBlocks(t *testing.T) {
 	keyFunc := func(path string, id uint64) uint64 {
-		key, err := ipc.Ftok(path, id)
+		key, err := Ftok(path, id)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -26,7 +24,7 @@ func TestMsgrcvBlocks(t *testing.T) {
 	}
 
 	for _, tt := range cases {
-		qid, err := ipc.Msgget(tt.key, ipc.IPC_CREAT|ipc.IPC_EXCL|tt.perm)
+		qid, err := Msgget(tt.key, IPC_CREAT|IPC_EXCL|tt.perm)
 		if err == syscall.EEXIST {
 			t.Errorf("queue with key 0x%x exists", tt.key)
 		}
@@ -34,16 +32,16 @@ func TestMsgrcvBlocks(t *testing.T) {
 			t.Fatal(err)
 		}
 		defer func() {
-			err = ipc.Msgctl(qid, ipc.IPC_RMID)
+			err = Msgctl(qid, IPC_RMID)
 			if err != nil {
 				t.Fatal(err)
 			}
 		}()
 
-		qbuf := &ipc.Msgbuf{Mtype: 12}
+		qbuf := &Msgbuf{Mtype: 12}
 		ch := make(chan struct{})
 		go func() {
-			err = ipc.Msgrcv(qid, qbuf, 0)
+			err = Msgrcv(qid, qbuf, 0)
 			if err == syscall.EIDRM {
 				// OK, queue was removed
 			} else if err != nil {
