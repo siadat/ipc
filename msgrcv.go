@@ -1,7 +1,6 @@
 package ipc
 
 import (
-	"bytes"
 	"syscall"
 	"unsafe"
 )
@@ -11,7 +10,7 @@ func Msgrcv(qid uint64, msg *Msgbuf, flags uint64) error {
 	qbuf := msgbufInternal{
 		Mtype: msg.Mtype,
 	}
-	_, _, err := syscall.Syscall6(syscall.SYS_MSGRCV,
+	r1, _, err := syscall.Syscall6(syscall.SYS_MSGRCV,
 		uintptr(qid),
 		uintptr(unsafe.Pointer(&qbuf)),
 		uintptr(bufSize),
@@ -22,8 +21,8 @@ func Msgrcv(qid uint64, msg *Msgbuf, flags uint64) error {
 	if err != 0 {
 		return err
 	}
-	sz := bytes.Index(qbuf.Mtext[:], []byte{0})
+
 	msg.Mtype = qbuf.Mtype
-	msg.Mtext = qbuf.Mtext[:sz]
+	msg.Mtext = qbuf.Mtext[:r1]
 	return nil
 }
