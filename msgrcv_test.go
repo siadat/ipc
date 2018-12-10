@@ -1,6 +1,8 @@
 package ipc_test
 
 import (
+	"bytes"
+	"fmt"
 	"log"
 	"syscall"
 	"testing"
@@ -8,6 +10,47 @@ import (
 
 	"github.com/siadat/ipc"
 )
+
+func TestMsgrcv(t *testing.T) {
+	qid, err := ipc.Msgget(mykey, ipc.IPC_CREAT|0600)
+	if err != nil {
+		panic(fmt.Sprintf("Failed to create ipc key %d: %s\n", mykey, err))
+	} else {
+		fmt.Printf("Create ipc queue id %d\n", qid)
+	}
+
+	defer func() {
+		err = ipc.Msgctl(qid, ipc.IPC_RMID)
+		if err != nil {
+			t.Fatal(err)
+		}
+	}()
+
+	input := []byte{0x18, 0x2d, 0x44, 0x00, 0xfb, 0x21, 0x09, 0x40}
+
+	msg := ipc.Msgbuf{Mtype: 12, Mtext: input}
+	err = ipc.Msgsnd(qid, &msg, 0)
+	if err != nil {
+		panic(fmt.Sprintf("Failed to send message to ipc id %d: %s\n", qid, err))
+	} else {
+		fmt.Printf("Message %v send to ipc id %d\n", input, qid)
+	}
+
+	qbuf := &ipc.Msgbuf{Mtype: 12}
+
+	err = ipc.Msgrcv(qid, qbuf, 0)
+
+	if err != nil {
+		panic(fmt.Sprintf("Failed to receive message to ipc id %d: %s\n", qid, err))
+	} else {
+		fmt.Printf("Message %v receive to ipc id %d\n", qbuf.Mtext, qid)
+	}
+
+	if !bytes.Equal(content, qbuf.Mtext) {
+		t.Errorf("Content = %v, want %v", qbuf.Mtext, content)
+	}
+
+}
 
 func TestMsgrcvBlocks(t *testing.T) {
 	keyFunc := func(path string, id uint64) uint64 {
