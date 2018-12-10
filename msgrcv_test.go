@@ -12,9 +12,9 @@ import (
 )
 
 func TestMsgrcv(t *testing.T) {
-	qid, err := ipc.Msgget(mykey, ipc.IPC_CREAT|0600)
+	qid, err := ipc.Msgget("/dev/null", ipc.IPC_CREAT|0600)
 	if err != nil {
-		panic(fmt.Sprintf("Failed to create ipc key %d: %s\n", mykey, err))
+		panic(fmt.Sprintf("Failed to create ipc queue : %s\n", err))
 	} else {
 		fmt.Printf("Create ipc queue id %d\n", qid)
 	}
@@ -46,8 +46,8 @@ func TestMsgrcv(t *testing.T) {
 		fmt.Printf("Message %v receive to ipc id %d\n", qbuf.Mtext, qid)
 	}
 
-	if !bytes.Equal(content, qbuf.Mtext) {
-		t.Errorf("Content = %v, want %v", qbuf.Mtext, content)
+	if !bytes.Equal(input, qbuf.Mtext) {
+		t.Errorf("Input = %v, want %v", qbuf.Mtext, input)
 	}
 
 }
