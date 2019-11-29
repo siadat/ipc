@@ -4,18 +4,18 @@ arch:
   - x64
   - arm7
 
-matrix:
-  include:
-    - os: linux
-      arch: x64
-    - os: linux
-      arch: x86
-    - os: linux
-      arch: arm7
-    - os: osx
+# matrix:
+#   include:
+#     - os: linux
+#       arch: x64
+#     - os: linux
+#       arch: x86
+#     - os: linux
+#       arch: arm7
 
-# os:
-#   - osx
+os:
+  - linux
+  - osx
 
 go:
   - 1.11

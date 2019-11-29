@@ -1,4 +1,5 @@
 test:
+	lscpu
 	go version
 	go vet .
 	go test -v .
