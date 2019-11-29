@@ -11,10 +11,10 @@ import (
 func TestFtok(t *testing.T) {
 	cases := []struct {
 		path string
-		id   uint64
+		id   uint
 	}{
-		{"ftok.go", 50},
-		{"ftok_test.go", 100},
+		{".", 50},
+		{"/dev/null", 100},
 	}
 
 	for _, tt := range cases {

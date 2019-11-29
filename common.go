@@ -22,11 +22,11 @@ const (
 )
 
 type Msgbuf struct {
-	Mtype uint64
+	Mtype uint
 	Mtext []byte
 }
 
 type msgbufInternal struct {
-	Mtype uint64
+	Mtype uint
 	Mtext [bufSize]byte
 }

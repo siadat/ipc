@@ -12,7 +12,7 @@ import (
 	"unsafe"
 )
 
-func Ftok(path string, id uint64) (uint64, error) {
+func Ftok(path string, id uint) (uint, error) {
 	cs := C.CString(path)
 
 	if cs == nil {
@@ -27,5 +27,5 @@ func Ftok(path string, id uint64) (uint64, error) {
 		return 0, err
 	}
 
-	return uint64(res), nil
+	return uint(res), nil
 }

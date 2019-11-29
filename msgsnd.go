@@ -7,7 +7,7 @@ import (
 )
 
 // Msgsnd calls the msgsnd() syscall.
-func Msgsnd(qid uint64, msg *Msgbuf, flags uint64) error {
+func Msgsnd(qid uint, msg *Msgbuf, flags uint) error {
 	if len(msg.Mtext) > bufSize {
 		return fmt.Errorf("mtext is too large, %d > %d", len(msg.Mtext), bufSize)
 	}

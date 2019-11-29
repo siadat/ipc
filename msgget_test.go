@@ -10,20 +10,20 @@ import (
 )
 
 func TestMsgget(t *testing.T) {
-	keyFunc := func(path string, id uint64) uint64 {
+	keyFunc := func(path string, id uint) uint {
 		key, err := ipc.Ftok(path, id)
 		if err != nil {
-			t.Fatal(err)
+			t.Fatalf("err=%q path=%q id=%d", err, path, id)
 		}
 		return key
 	}
 
 	cases := []struct {
-		key  uint64
+		key  uint
 		perm int
 	}{
-		{keyFunc("msgget.go", 123), 0600},
-		{keyFunc("ftok.go", 123), 0600},
+		{keyFunc(".", 123), 0660},
+		{keyFunc("/dev/null", 123), 0660},
 	}
 
 	for _, tt := range cases {

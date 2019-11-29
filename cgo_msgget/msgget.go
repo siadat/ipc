@@ -17,12 +17,12 @@ const (
 	IPC_CREAT = C.IPC_CREAT
 )
 
-func Msgget(key uint64, mode int) (uint64, error) {
+func Msgget(key uint, mode int) (uint, error) {
 	res, err := C.msgget(C.key_t(key), C.int(mode))
 
 	if err != nil {
 		return 0, err
 	}
 
-	return uint64(res), nil
+	return uint(res), nil
 }

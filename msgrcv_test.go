@@ -61,7 +61,7 @@ func TestMsgrcv(t *testing.T) {
 }
 
 func TestMsgrcvBlocks(t *testing.T) {
-	keyFunc := func(path string, id uint64) uint64 {
+	keyFunc := func(path string, id uint) uint {
 		key, err := ipc.Ftok(path, id)
 		if err != nil {
 			t.Fatal(err)
@@ -70,10 +70,10 @@ func TestMsgrcvBlocks(t *testing.T) {
 	}
 
 	cases := []struct {
-		key  uint64
+		key  uint
 		perm int
 	}{
-		{keyFunc("/dev/null", uint64('m')), 0600},
+		{keyFunc("/dev/null", uint('m')), 0600},
 	}
 
 	for _, tt := range cases {

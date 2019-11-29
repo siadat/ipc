@@ -6,7 +6,7 @@ import (
 )
 
 // Msgrcv calls the msgrcv() syscall.
-func Msgrcv(qid uint64, msg *Msgbuf, flags uint64) error {
+func Msgrcv(qid uint, msg *Msgbuf, flags uint) error {
 	qbuf := msgbufInternal{
 		Mtype: msg.Mtype,
 	}

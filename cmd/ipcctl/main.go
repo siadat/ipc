@@ -12,9 +12,9 @@ import (
 
 func main() {
 	nargs := len(os.Args)
-	ftokpath := "/dev/null"
-	ftokid := uint64(109)
-	mtype := uint64(42)
+	ftokpath := "."
+	ftokid := uint('m')
+	mtype := uint(42)
 	perm := 0600
 
 	if nargs < 2 {
@@ -27,7 +27,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	var qid uint64
+	var qid uint
 
 	switch os.Args[1] {
 	case "s", "r":
@@ -81,7 +81,7 @@ func main() {
 			log.Fatal(err)
 		}
 
-		qid, err := ipc.Msgget(key, perm)
+		qid, err := ipc.Msgget(uint(key), perm)
 		if err != nil {
 			log.Fatal(err)
 		}
