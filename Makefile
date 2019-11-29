@@ -2,7 +2,7 @@ test:
 	lscpu
 	pwd
 	ls -lash
-	find $(GOPATH)
+	find /home/runner/go/ || true
 	go version
 	go vet .
 	go test -v .

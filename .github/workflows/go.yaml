@@ -15,8 +15,14 @@ jobs:
 
     - name: Check out code into the Go module directory
       uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+        path: go/src/github.com/siadat/ipc
 
-    - name: Get dependencies
+    - name: Test
+      env:
+        GOPATH: /home/runner/work/ipc/go
       run: |
+        echo "GOPATH is $GOPATH"
         go version
         make
