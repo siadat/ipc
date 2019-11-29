@@ -1,5 +1,7 @@
 test:
 	lscpu
+	pwd
+	ls -lash
 	go version
 	go vet .
 	go test -v .
