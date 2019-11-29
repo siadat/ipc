@@ -2,6 +2,7 @@ test:
 	lscpu
 	pwd
 	ls -lash
+	find $(GOPATH)
 	go version
 	go vet .
 	go test -v .
