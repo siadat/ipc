@@ -1,12 +1,15 @@
 language: go
 arch:
-  - amd64
+  - x86
+  - x64
   - arm7
 
 matrix:
   include:
     - os: linux
-      arch: amd64
+      arch: x64
+    - os: linux
+      arch: x86
     - os: linux
       arch: arm7
     - os: osx
