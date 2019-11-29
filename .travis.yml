@@ -1,18 +1,6 @@
 language: go
-arch:
-  - amd64
-  - arm7
-
-matrix:
-  include:
-    - os: linux
-      arch: amd64
-    - os: linux
-      arch: arm7
-    - os: osx
-
-# os:
-#   - osx
-
+os:
+  - linux
+  - osx
 go:
   - 1.11
