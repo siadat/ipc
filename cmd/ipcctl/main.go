@@ -90,6 +90,8 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
+	default:
+		log.Fatalf("Unsupported option %s\n", os.Args[1])
 	}
 }
 

@@ -1,5 +1,9 @@
 package ipc
 
+import (
+	"math/bits"
+)
+
 const (
 	// https://code.woboq.org/userspace/glibc/sysdeps/unix/sysv/linux/bits/ipc.h.html
 	// Mode bits for `msgget', `semget', and `shmget'.
@@ -17,16 +21,14 @@ const (
 	IPC_PRIVATE = 0 // Private key. NOTE: this value is of type __key_t, i.e., ((__key_t) 0)
 )
 
-const (
-	bufSize = 8192
-)
+var msgmax = 8192  // default size, will be overriden during init to match system msgmax
+var uintSize = bits.UintSize / 8 // size of a uint, arch dependent
 
 type Msgbuf struct {
 	Mtype uint
 	Mtext []byte
 }
 
-type msgbufInternal struct {
-	Mtype uint
-	Mtext [bufSize]byte
+func Msgmax() int {
+	return msgmax
 }
