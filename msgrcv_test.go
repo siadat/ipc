@@ -41,7 +41,7 @@ func TestMsgrcv(t *testing.T) {
 	if err != nil {
 		panic(fmt.Sprintf("Failed to send message to ipc id %d: %s\n", qid, err))
 	} else {
-		fmt.Printf("Message %v send to ipc id %d\n", input, qid)
+		fmt.Printf("Message %x send to ipc id %d\n", input, qid)
 	}
 
 	qbuf := &ipc.Msgbuf{Mtype: 12}
@@ -51,7 +51,7 @@ func TestMsgrcv(t *testing.T) {
 	if err != nil {
 		panic(fmt.Sprintf("Failed to receive message to ipc id %d: %s\n", qid, err))
 	} else {
-		fmt.Printf("Message %v receive to ipc id %d\n", qbuf.Mtext, qid)
+		fmt.Printf("Message %x receive to ipc id %d\n", qbuf.Mtext, qid)
 	}
 
 	if !bytes.Equal(input, qbuf.Mtext) {

@@ -40,7 +40,6 @@ func TestMsgsnd(t *testing.T) {
 				t.Fatal(err)
 			}
 		}(qid)
-
 		mtext := "hello"
 		done := make(chan struct{})
 		go func() {
@@ -52,6 +51,7 @@ func TestMsgsnd(t *testing.T) {
 			if want, got := mtext, string(qbuf.Mtext); want != got {
 				t.Fatalf("want %#v, got %#v", want, got)
 			}
+			fmt.Printf("Received: %s\n", string(qbuf.Mtext))
 			done <- struct{}{}
 		}()
 
