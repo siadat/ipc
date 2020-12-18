@@ -42,14 +42,15 @@ func TestMsgsnd(t *testing.T) {
 		}(qid)
 		mtext := "hello"
 		done := make(chan struct{})
+		errChan := make(chan error, 1)
 		go func() {
 			qbuf := &ipc.Msgbuf{Mtype: 12}
 			err := ipc.Msgrcv(qid, qbuf, 0)
 			if err != nil {
-				t.Fatal(err)
+				errChan <- err
 			}
 			if want, got := mtext, string(qbuf.Mtext); want != got {
-				t.Fatalf("want %#v, got %#v", want, got)
+				errChan <- fmt.Errorf("want %#v, got %#v", want, got)
 			}
 			fmt.Printf("Received: %s\n", string(qbuf.Mtext))
 			done <- struct{}{}
@@ -63,6 +64,8 @@ func TestMsgsnd(t *testing.T) {
 
 		select {
 		case <-done:
+		case err := <-errChan:
+			t.Fatal(err)
 		case <-time.After(time.Second):
 			t.Fatal("blocked for too long")
 		}
@@ -115,24 +118,38 @@ func ExampleMsgsnd() {
 }
 
 func TestPrepareMsg(t *testing.T) {
-	// Message too long
-	msg := ipc.Msgbuf{Mtype: 1234}
-	msg.Mtext = make([]byte, ipc.Msgmax() + 1)
-	ipcMsg, err := ipc.PrepareMsg(&msg)
-	if ipcMsg != nil {
-		t.Error("Expected ipcMsg to be <nil>")
-	}
-	if err == nil {
-		t.Error("Expected an error for len > msgmax")
+	cases := []struct {
+		label   string
+		mtext   []byte
+		wantErr bool
+	}{
+		{"message too long", make([]byte, ipc.Msgmax()+1), true},
+		{"ok", []byte("test text"), false},
 	}
 
-	// all Ok
-	msg.Mtext = []byte("test text")
-	ipcMsg, err = ipc.PrepareMsg(&msg)
-	if ipcMsg == nil {
-		t.Error("Expected an ipc message")
+	for _, tt := range cases {
+		msg := ipc.Msgbuf{
+			Mtype: 1234,
+			Mtext: tt.mtext,
+		}
+		ipcMsg, err := ipc.PrepareMsg(&msg)
+
+		if tt.wantErr {
+			if ipcMsg != nil {
+				t.Errorf("case %s: Expected ipcMsg to be <nil>", tt.label)
+			}
+			if err == nil {
+				t.Errorf("case %s: Expected an error", tt.label)
+			}
+		} else {
+			if ipcMsg == nil {
+				t.Errorf("case %s: Expected an ipc message", tt.label)
+			}
+			if err != nil {
+				t.Errorf("case %s: Expected no error, got %v", tt.label, err)
+			}
+
+		}
 	}
-	if err != nil {
-		t.Errorf("Expected no error, got %v", err)
-	}
+
 }
