@@ -113,3 +113,26 @@ func ExampleMsgsnd() {
 	// Output:
 	// received message: "bonjour"
 }
+
+func TestPrepareMsg(t *testing.T) {
+	// Message too long
+	msg := ipc.Msgbuf{Mtype: 1234}
+	msg.Mtext = make([]byte, ipc.Msgmax() + 1)
+	ipcMsg, err := ipc.PrepareMsg(&msg)
+	if ipcMsg != nil {
+		t.Error("Expected ipcMsg to be <nil>")
+	}
+	if err == nil {
+		t.Error("Expected an error for len > msgmax")
+	}
+
+	// all Ok
+	msg.Mtext = []byte("test text")
+	ipcMsg, err = ipc.PrepareMsg(&msg)
+	if ipcMsg == nil {
+		t.Error("Expected an ipc message")
+	}
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+}
