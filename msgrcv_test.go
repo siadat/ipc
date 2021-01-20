@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/siadat/ipc"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestMsgrcv(t *testing.T) {
@@ -58,6 +59,7 @@ func TestMsgrcv(t *testing.T) {
 		t.Errorf("Input = %v, want %v", qbuf.Mtext, input)
 	}
 
+	assert.Equal(t, 12, int(qbuf.Mtype))
 }
 
 func TestMsgrcvBlocks(t *testing.T) {
