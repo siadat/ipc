@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/siadat/ipc"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestMsgrcv(t *testing.T) {
@@ -44,9 +45,8 @@ func TestMsgrcv(t *testing.T) {
 		fmt.Printf("Message %x send to ipc id %d\n", input, qid)
 	}
 
-	qbuf := &ipc.Msgbuf{Mtype: 12}
-
-	err = ipc.Msgrcv(qid, qbuf, 0)
+	var qbuf ipc.Msgbuf
+	err = ipc.Msgrcv(qid, &qbuf, 0)
 
 	if err != nil {
 		panic(fmt.Sprintf("Failed to receive message to ipc id %d: %s\n", qid, err))
@@ -58,6 +58,7 @@ func TestMsgrcv(t *testing.T) {
 		t.Errorf("Input = %v, want %v", qbuf.Mtext, input)
 	}
 
+	assert.Equal(t, 12, int(qbuf.Mtype))
 }
 
 func TestMsgrcvBlocks(t *testing.T) {
