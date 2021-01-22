@@ -27,19 +27,19 @@ func Msgrcv(qid uint, msg *Msgbuf, flags uint) error {
 	switch uintSize {
 	case 4:
 		var mtype uint32
-		err := binary.Write(buffer, binary.LittleEndian, &mtype)
+		err := binary.Read(buffer, binary.LittleEndian, &mtype)
 		if err != nil {
 			return fmt.Errorf("Can't write binary: %v", err)
 		}
 		msg.Mtype = uint(mtype)
 	case 8:
 		var mtype uint64
-		err := binary.Write(buffer, binary.LittleEndian, &mtype)
+		err := binary.Read(buffer, binary.LittleEndian, &mtype)
 		if err != nil {
 			return fmt.Errorf("Can't write binary: %v", err)
 		}
 		msg.Mtype = uint(mtype)
 	}
-	msg.Mtext = buf[uintSize:uintSize+int(lengthRead)]
+	msg.Mtext = buf[uintSize : uintSize+int(lengthRead)]
 	return nil
 }
