@@ -1,9 +1,9 @@
+[![GoDoc](https://godoc.org/github.com/siadat/ipc?status.svg)](https://godoc.org/github.com/siadat/ipc)
+[![Build Status](https://travis-ci.org/siadat/ipc.svg?branch=master)](https://travis-ci.org/siadat/ipc)
+
 # System V message queue IPC functions
 
 Wrapper functions for System V Message Queue IPC.
-
-[![GoDoc](https://godoc.org/github.com/siadat/ipc?status.svg)](https://godoc.org/github.com/siadat/ipc)
-[![Build Status](https://travis-ci.org/siadat/ipc.svg?branch=master)](https://travis-ci.org/siadat/ipc)
 
 ## Example
 
